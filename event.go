@@ -47,8 +47,20 @@ func ParseLine(line string) (*Event, error) {
 	return &e, nil
 }
 
-func (e *Event) AsLine() string {
+func (e *Event) IsZero() bool {
 	if e == nil {
+		return true
+	}
+	return e.At.IsZero() &&
+		e.Level == UnknownLevel &&
+		e.Category == "" &&
+		e.Message == "" &&
+		e.Error == "" &&
+		e.Fields == nil
+}
+
+func (e *Event) AsLine() string {
+	if e.IsZero() {
 		return ""
 	}
 	buff := bytes.NewBufferString("")
