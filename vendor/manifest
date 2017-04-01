@@ -1,0 +1,13 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/Knetic/govaluate",
+			"repository": "https://github.com/Knetic/govaluate",
+			"vcs": "git",
+			"revision": "8a97b97b34db3691292d23a49e2243551772cefc",
+			"branch": "master",
+			"notests": true
+		}
+	]
+}

@@ -1,2 +1,2 @@
 #!/bin/bash
-nex line.nex && go tool yacc -o line.yy.go -v '' line.y && echo "OK"
+nex kvl.nex && go tool yacc -o kvl.yy.go -v '' kvl.y && echo "OK"

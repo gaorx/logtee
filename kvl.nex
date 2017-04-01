@@ -16,7 +16,7 @@ type fieldEntry struct {
     n, v string
 }
 
-func parseFieldEntries(line string) (entries []fieldEntry, err error) {
+func parseKvlEntries(line string) (entries []fieldEntry, err error) {
     defer func(){
         if r := recover(); r != nil {
             entries, err = nil, errors.New("Panic: yyParse")

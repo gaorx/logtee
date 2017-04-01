@@ -1,10 +1,10 @@
-//line line.y:2
+//line kvl.y:2
 package logtee
 
 import __yyfmt__ "fmt"
 
-//line line.y:2
-//line line.y:5
+//line kvl.y:2
+//line kvl.y:5
 type yySymType struct {
 	yys     int
 	entries []fieldEntry
@@ -31,7 +31,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyInitialStackSize = 16
 
-//line line.y:24
+//line kvl.y:24
 //line yacctab:1
 var yyExca = [...]int{
 	-1, 1,
@@ -430,28 +430,28 @@ yydefault:
 
 	case 2:
 		yyDollar = yyS[yypt-4 : yypt+1]
-		//line line.y:18
+		//line kvl.y:18
 		{
 			yyVAL.entries = append(yyDollar[4].entries, fieldEntry{yyDollar[1].v, yyDollar[3].v})
 			yylex.(*Lexer).parseResult = yyVAL
 		}
 	case 3:
 		yyDollar = yyS[yypt-4 : yypt+1]
-		//line line.y:19
+		//line kvl.y:19
 		{
 			yyVAL.entries = append(yyDollar[4].entries, fieldEntry{yyDollar[1].v, yyDollar[3].v})
 			yylex.(*Lexer).parseResult = yyVAL
 		}
 	case 4:
 		yyDollar = yyS[yypt-4 : yypt+1]
-		//line line.y:20
+		//line kvl.y:20
 		{
 			yyVAL.entries = append(yyDollar[4].entries, fieldEntry{yyDollar[1].v, yyDollar[3].v})
 			yylex.(*Lexer).parseResult = yyVAL
 		}
 	case 5:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line line.y:21
+		//line kvl.y:21
 		{
 			yyVAL.entries = append(yyDollar[3].entries, fieldEntry{yyDollar[1].v, ""})
 			yylex.(*Lexer).parseResult = yyVAL

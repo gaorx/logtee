@@ -15,8 +15,8 @@ type Event struct {
 	Fields   Fields
 }
 
-func ParseLine(line string) (*Event, error) {
-	fieldEntries, err := parseFieldEntries(line)
+func ParseKVL(line string) (*Event, error) {
+	fieldEntries, err := parseKvlEntries(line)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (e *Event) IsZero() bool {
 		e.Fields == nil
 }
 
-func (e *Event) AsLine() string {
+func (e *Event) AsKVL() string {
 	if e.IsZero() {
 		return ""
 	}
@@ -78,5 +78,6 @@ func (e *Event) AsLine() string {
 }
 
 func (e *Event) String() string {
-	return e.AsLine()
+	return e.AsKVL()
 }
+
