@@ -80,4 +80,3 @@ func (e *Event) AsKVL() string {
 func (e *Event) String() string {
 	return e.AsKVL()
 }
-

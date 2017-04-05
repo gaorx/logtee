@@ -3,6 +3,8 @@ package logtee
 import (
 	"fmt"
 	"strconv"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -46,4 +48,34 @@ func parseTime(s string) (time.Time, error) {
 
 func formatTime(t time.Time) string {
 	return t.Format(time.RFC3339)
+}
+
+func lockDo(mtx *sync.Mutex, f func()) {
+	defer mtx.Unlock()
+	mtx.Lock()
+	f()
+}
+
+func safeDo(f func()) {
+	defer func() {
+		if r := recover(); r != nil {
+			// TODO
+		}
+	}()
+	f()
+}
+
+func split2(s, sep string) (string, string) {
+	if s == "" {
+		return "", ""
+	}
+	ss := strings.SplitN(s, sep, 2)
+	switch len(ss) {
+	case 0:
+		return "", ""
+	case 1:
+		return ss[0], ""
+	default:
+		return ss[0], ss[1]
+	}
 }

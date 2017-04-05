@@ -14,6 +14,7 @@
 .glide/
 
 .idea/
-devtest/
+local_test/
+local_gopath/
 local_*
 
