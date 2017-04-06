@@ -1,9 +1,11 @@
 package logtee
 
 import (
+	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 	"math/rand"
 	"os"
+	"os/signal"
 	"time"
 )
 
@@ -19,17 +21,17 @@ func Main() {
 			Value: "",
 			Usage: "Configuration path",
 		},
-		cli.StringFlag{
-			Name:  "file",
-			Value: "",
-			Usage: "Filename",
-		},
 		cli.BoolFlag{
 			Name:  "follow,f",
 			Usage: "Follow file",
 		},
 	}
-	app.Action = main0
+	app.Action = func(cc *cli.Context) {
+		err := main0(cc)
+		if err != nil {
+			panic(err)
+		}
+	}
 	app.Run(os.Args)
 }
 
@@ -40,13 +42,13 @@ func main0(cc *cli.Context) error {
 	configFilename := cc.String("config")
 	conf, err := LoadConfig(configFilename)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Load config error")
 	}
 
 	// parse config
 	hh, err := ParseHandlers(conf)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Parse config error")
 	}
 
 	// source
@@ -55,7 +57,7 @@ func main0(cc *cli.Context) error {
 	if filename != "" {
 		source, err = FileSource(filename, cc.Bool("follow"))
 		if err != nil {
-			return err
+			return errors.Wrap(err, "Load source error")
 		}
 	} else {
 		source = StdinSource()
@@ -64,9 +66,21 @@ func main0(cc *cli.Context) error {
 	// init
 	err = hh.Init()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Init error")
 	}
 	defer hh.Close()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		for sig := range c {
+			switch sig {
+			case os.Interrupt:
+				hh.Flush()
+				os.Exit(0)
+			}
+		}
+	}()
 
 	// go
 	hh.Do(source)

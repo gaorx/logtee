@@ -1,6 +1,7 @@
 package logtee
 
 import (
+	"github.com/pkg/errors"
 	"sync"
 	"time"
 )
@@ -8,8 +9,9 @@ import (
 type BaseHandler struct {
 	Name          string
 	Config        Config
+	Processor     func(events []*Event) error
+	Formatter     Formatter
 	matcher       matcher
-	data          map[string]interface{}
 	buff          []*Event
 	buffMtx       sync.Mutex
 	lastProcessAt time.Time
@@ -29,7 +31,7 @@ func (h *BaseHandler) Init() error {
 	h.matcher = matcher
 
 	// batchSize
-	batchSize := conf.Int("batch_size", 20)
+	batchSize := conf.Int("batchSize", 20)
 	h.batchSize = batchSize
 	if h.batchSize > 0 {
 		h.buff = make([]*Event, 0, h.batchSize)
@@ -37,11 +39,29 @@ func (h *BaseHandler) Init() error {
 		h.buff = make([]*Event, 0, 100)
 	}
 
-	// async process
-	h.asyncProcess = conf.Bool("async_process", false)
+	// formatter
+	var formatterConf Config
+	fv := conf.Interface("format", nil)
+	if fv == nil {
+		formatterConf = Config{"name": "json"}
+	} else if fv1, ok := fv.(string); ok {
+		formatterConf = Config{"name": fv1}
+	} else if fv1, ok := fv.(map[string]interface{}); ok {
+		formatterConf = Config(fv1)
+	} else {
+		return errors.New("Illegal format")
+	}
+	formatter, err := CompileFormatter(formatterConf)
+	if err != nil {
+		return err
+	}
+	h.Formatter = formatter
+
+	// async
+	h.asyncProcess = conf.Bool("async", false)
 
 	// batchInterval
-	batchIntervalSec := conf.Int("batch_interval", 60)
+	batchIntervalSec := conf.Int("batchInterval", 60)
 	if batchIntervalSec > 0 {
 		h.batchInterval = time.Duration(batchIntervalSec) * time.Second
 	}
@@ -95,9 +115,15 @@ func (h *BaseHandler) Append(e *Event) {
 	h.callProcess(processing)
 }
 
+func (h *BaseHandler) Flush() {
+	h.callProcess(h.resetBuff())
+}
+
 func (h *BaseHandler) doProcess(events []*Event) error {
-	println("****11", len(events))
-	return nil
+	if h.Processor == nil {
+		return errors.New("Nil processor")
+	}
+	return h.Processor(events)
 }
 
 func (h *BaseHandler) callProcess(events []*Event) {
@@ -129,19 +155,4 @@ func (h *BaseHandler) resetBuff() []*Event {
 	processing := h.buff
 	h.buff = make([]*Event, 0, h.batchSize)
 	return processing
-}
-
-func (h *BaseHandler) Set(k string, v interface{}) {
-	if h.data == nil {
-		h.data = map[string]interface{}{}
-	}
-	h.data[k] = v
-}
-
-func (h *BaseHandler) Get(k string, def interface{}) interface{} {
-	v, ok := h.data[k]
-	if !ok {
-		return def
-	}
-	return v
 }

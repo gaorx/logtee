@@ -1,0 +1,17 @@
+time="2017-03-30T15:37:56+08:00" level=debug msg="200 GET /api/a3/play" comment= ip=111.204.125.165 latency=3.35259ms
+time="2017-03-30T15:38:05+08:00" level=debug msg="200 GET /api/a3/emc/pre_play" comment= ip=111.204.125.164 latency=41.5945ms
+time="2017-03-30T15:38:10+08:00" level=debug msg="200 GET /api/a3/entity/V002548013" comment= ip=111.204.125.165 latency=392.962057ms
+time="2017-03-30T15:38:14+08:00" level=debug msg="200 GET /api/a3/feed/op-mine" comment= ip=111.204.125.165 latency=921.848µs
+time="2017-03-30T15:38:15+08:00" level=debug msg="200 GET /api/a3/filter" comment= ip=111.204.125.164 latency=1.251511ms
+time="2017-03-30T15:38:17+08:00" level=debug msg="200 GET /api/a3/play" comment= ip=111.204.125.165 latency=1.770619ms
+time="2017-03-30T15:38:49+08:00" level=debug msg="200 GET /api/a3/filter" comment= ip=111.204.125.164 latency=1.316081ms
+time="2017-03-30T15:38:57+08:00" level=debug msg="200 GET /api/a3/channel/media" comment= ip=111.204.125.165 latency=1.035404ms
+time="2017-03-30T15:38:57+08:00" level=debug msg="200 GET /api/a3/filter" comment= ip=111.204.125.164 latency=1.381495ms
+time="2017-03-30T15:39:00+08:00" level=debug msg="200 GET /api/a3/entity/V001976421" comment= ip=111.204.125.163 latency=240.899365ms
+time="2017-03-30T15:39:05+08:00" level=debug msg="200 GET /api/a3/play" comment= ip=111.204.125.165 latency=1.584972ms
+time="2017-03-30T15:39:07+08:00" level=debug msg="404 GET /api/a3/meta/settings" comment= ip=111.204.125.165 latency=1.627031ms
+time="2017-03-30T15:39:09+08:00" level=debug msg="200 GET /api/a3/emc/pre_play" comment= ip=111.204.125.164 latency=39.282727ms
+time="2017-03-30T15:39:11+08:00" level=debug msg="200 GET /api/a3/play" comment= ip=111.204.125.165 latency=1.656558ms
+time="2017-03-30T15:39:12+08:00" level=debug msg="200 GET /api/a3/filter" comment= ip=111.204.125.164 latency=1.206296ms
+time="2017-03-30T15:39:30+08:00" level=debug msg="200 GET /api/a3/channel/tvlive" comment= ip=111.204.125.165 latency=1.327631ms
+time="2017-03-30T15:39:33+08:00" level=debug msg="200 GET /api/a3/play" comment= ip=111.204.125.165 latency=14.161792ms

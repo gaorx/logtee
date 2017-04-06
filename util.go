@@ -2,6 +2,7 @@ package logtee
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"strconv"
 	"strings"
 	"sync"
@@ -30,6 +31,26 @@ var (
 
 func escape(s string) string {
 	return strconv.Quote(s)
+}
+
+func tryEscape(s string) string {
+	if needEscape(s) {
+		return escape(s)
+	} else {
+		return s
+	}
+}
+
+func needEscape(s string) bool {
+	for _, ch := range s {
+		if !((ch >= 'a' && ch <= 'z') ||
+			(ch >= 'A' && ch <= 'Z') ||
+			(ch >= '0' && ch <= '9') ||
+			ch == '-' || ch == '.') {
+			return true
+		}
+	}
+	return false
 }
 
 func unescape(s string) (string, error) {
@@ -77,5 +98,42 @@ func split2(s, sep string) (string, string) {
 		return ss[0], ""
 	default:
 		return ss[0], ss[1]
+	}
+}
+
+func splitNotEmpty(s, sep string) []string {
+	ss := strings.Split(s, sep)
+	if len(ss) == 0 {
+		return ss
+	}
+	ss1 := make([]string, 0, len(ss))
+	for _, s := range ss {
+		s = strings.TrimSpace(s)
+		if s != "" {
+			ss1 = append(ss1, s)
+		}
+	}
+	return ss1
+}
+
+func strArg(v interface{}) (string, error) {
+	if v == nil {
+		return "", errors.New("Nil arg")
+	}
+	if r, ok := v.(string); ok {
+		return r, nil
+	} else {
+		return "", errors.Errorf("Argument must be string (%s)", v)
+	}
+}
+
+func intArg(v interface{}) (int, error) {
+	if v == nil {
+		return 0, errors.New("Nil arg")
+	}
+	if r, ok := v.(int); ok {
+		return r, nil
+	} else {
+		return 0, errors.Errorf("Argument must be int (%s)", v)
 	}
 }

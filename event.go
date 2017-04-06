@@ -1,8 +1,6 @@
 package logtee
 
 import (
-	"bytes"
-	"fmt"
 	"time"
 )
 
@@ -12,7 +10,7 @@ type Event struct {
 	Category string
 	Message  string
 	Error    string
-	Fields   Fields
+	Fields   map[string]string
 }
 
 func ParseKVL(line string) (*Event, error) {
@@ -39,7 +37,7 @@ func ParseKVL(line string) (*Event, error) {
 			e.Error = v
 		default:
 			if e.Fields == nil {
-				e.Fields = Fields{}
+				e.Fields = map[string]string{}
 			}
 			e.Fields[n] = v
 		}
@@ -59,24 +57,10 @@ func (e *Event) IsZero() bool {
 		e.Fields == nil
 }
 
-func (e *Event) AsKVL() string {
-	if e.IsZero() {
+func (e *Event) String() string {
+	b, err := kvlFormatter(e)
+	if err != nil {
 		return ""
 	}
-	buff := bytes.NewBufferString("")
-	fmt.Fprintf(buff, `time=%s `, escape(formatTime(e.At)))
-	fmt.Fprintf(buff, `level=%s `, escape(e.Level.String()))
-	fmt.Fprintf(buff, `category=%s `, escape(e.Category))
-	fmt.Fprintf(buff, `msg=%s `, escape(e.Message))
-	if e.Error != "" {
-		fmt.Fprintf(buff, `level=%s `, escape(e.Error))
-	}
-	for k, v := range e.Fields {
-		fmt.Fprintf(buff, `%s=%s `, k, escape(v))
-	}
-	return buff.String()
-}
-
-func (e *Event) String() string {
-	return e.AsKVL()
+	return string(b)
 }

@@ -11,8 +11,7 @@ type Handler interface {
 	Close() error
 	Match(e *Event) (bool, error)
 	Append(e *Event)
-	Set(k string, v interface{})
-	Get(k string, def interface{}) interface{}
+	Flush()
 }
 
 type Handlers []Handler
@@ -46,7 +45,7 @@ func NewHandler(typ, name string, conf Config) (Handler, error) {
 func ParseHandlers(conf Config) (Handlers, error) {
 	var handlers Handlers
 	for k := range conf {
-		typ, name := split2(k, ":")
+		typ, name := split2(k, ".")
 		h, err := NewHandler(typ, name, conf.Sub(k, nil))
 		if err != nil {
 			return nil, err
@@ -93,10 +92,18 @@ func (hh Handlers) DoOne(e *Event) {
 	}
 }
 
+func (hh Handlers) Flush() {
+	for _, h := range hh {
+		h.Flush()
+	}
+}
+
 func (hh Handlers) Do(src Source) {
 	if src == nil {
 		return
 	}
+
+	defer hh.Flush()
 	for line := range src {
 		line = strings.TrimRight(line, "\r\n ")
 		e, err := ParseKVL(line)
