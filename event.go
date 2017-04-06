@@ -1,6 +1,7 @@
 package logtee
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -13,16 +14,16 @@ type Event struct {
 	Fields   map[string]string
 }
 
-func ParseKVL(line string) (*Event, error) {
-	fieldEntries, err := parseKvlEntries(line)
+func ParseLine(line string) (*Event, error) {
+	var m map[string]string
+	err := json.Unmarshal([]byte(line), &m)
 	if err != nil {
 		return nil, err
 	}
 	e := Event{}
-	for _, fieldEntry := range fieldEntries {
-		n, v := fieldEntry.n, fieldEntry.v
+	for n, v := range m {
 		switch n {
-		case "time":
+		case "at", "time": // 'time' for logrus
 			e.At, err = parseTime(v)
 			if err != nil {
 				return nil, err
@@ -31,9 +32,9 @@ func ParseKVL(line string) (*Event, error) {
 			e.Level = ParseLevel(v)
 		case "category":
 			e.Category = v
-		case "message", "msg":
+		case "message", "msg": // 'msg' for logrus
 			e.Message = v
-		case "error", "err":
+		case "error": // 'error' for logrus
 			e.Error = v
 		default:
 			if e.Fields == nil {
@@ -58,7 +59,7 @@ func (e *Event) IsZero() bool {
 }
 
 func (e *Event) String() string {
-	b, err := kvlFormatter(e)
+	b, err := jsonFormatter(e)
 	if err != nil {
 		return ""
 	}

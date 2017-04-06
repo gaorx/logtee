@@ -28,8 +28,7 @@ func (h *ScribeHandler) Init() error {
 func (h *ScribeHandler) process(events []*Event) error {
 	for _, e := range events {
 		b, _ := h.Formatter(e)
-		println("**a", string(b))
+		println("**", string(b))
 	}
-	println("=====")
 	return nil
 }

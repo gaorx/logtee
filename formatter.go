@@ -3,7 +3,6 @@ package logtee
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/pkg/errors"
 )
 
@@ -41,24 +40,6 @@ func FormatterFactoryOf(f Formatter) FormatterFactory {
 	return func(_ Config) (Formatter, error) {
 		return f, nil
 	}
-}
-
-func kvlFormatter(e *Event) ([]byte, error) {
-	if e.IsZero() {
-		return nil, errors.New("Nil event")
-	}
-	buff := bytes.NewBufferString("")
-	fmt.Fprintf(buff, `time=%s `, escape(formatTime(e.At)))
-	fmt.Fprintf(buff, `level=%s `, escape(e.Level.String()))
-	fmt.Fprintf(buff, `category=%s `, escape(e.Category))
-	fmt.Fprintf(buff, `msg=%s `, escape(e.Message))
-	if e.Error != "" {
-		fmt.Fprintf(buff, `error=%s `, escape(e.Error))
-	}
-	for k, v := range e.Fields {
-		fmt.Fprintf(buff, `%s=%s `, k, escape(v))
-	}
-	return buff.Bytes(), nil
 }
 
 func jsonFormatter(e *Event) ([]byte, error) {

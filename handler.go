@@ -106,8 +106,8 @@ func (hh Handlers) Do(src Source) {
 	defer hh.Flush()
 	for line := range src {
 		line = strings.TrimRight(line, "\r\n ")
-		e, err := ParseKVL(line)
-		if err != nil {
+		e, err := ParseLine(line)
+		if err != nil || e == nil {
 			continue
 		}
 		hh.DoOne(e)
