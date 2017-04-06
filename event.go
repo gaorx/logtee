@@ -2,6 +2,7 @@ package logtee
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 )
 
@@ -42,6 +43,9 @@ func ParseLine(line string) (*Event, error) {
 			}
 			e.Fields[n] = v
 		}
+	}
+	if e.At.IsZero() || e.Level == UnknownLevel {
+		return nil, errors.New("Illegal line format")
 	}
 	return &e, nil
 }
